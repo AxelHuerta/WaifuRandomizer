@@ -42,7 +42,7 @@ export function App() {
       className={"min-h-screen text-white"}
       style={{ background: `url('${waifuImage}')` }}
     >
-      <div className="bg-[rgba(0,0,0,.5)] backdrop-blur-3xl h-screen grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
+      <div className="bg-[rgba(0,0,0,.5)] min-h-screen backdrop-blur-3xl grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
         <div className="flex flex-col justify-center items-center">
           {/* main image */}
           <img
