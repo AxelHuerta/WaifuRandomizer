@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, useEffect, ChangeEvent } from "react";
+import { AiOutlineCloudDownload } from "react-icons/ai";
 
 type Tag = {
   id: number;
@@ -12,6 +13,7 @@ export function App() {
   const baseURL = "https://api.waifu.im/search";
   const [waifuImage, setWaifuImage] = useState("");
   const [tag, setTag] = useState("");
+  const [extension, setExtension] = useState(".jpg");
   const [allTags, setAllTags] = useState<Tag[]>([]);
 
   const getRandomWaifu = () => {
@@ -25,6 +27,7 @@ export function App() {
     axios.get(`${baseURL}?included_tags=${tag}`).then((res) => {
       setWaifuImage(res.data.images[0].url);
       setAllTags(res.data.images[0].tags);
+      setExtension(res.data.images[0].extension);
     });
   };
 
@@ -45,11 +48,26 @@ export function App() {
       <div className="bg-[rgba(0,0,0,.5)] min-h-screen backdrop-blur-3xl grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
         <div className="flex flex-col justify-center items-center">
           {/* main image */}
-          <img
-            src={waifuImage}
-            alt="No cargo la waifu 😔"
-            className="rounded-lg max-h-[70vh]"
-          />
+          <div className="relative">
+            <img
+              src={waifuImage}
+              alt="No cargo la waifu 😔"
+              className="rounded-lg max-h-[70vh]"
+              loading="lazy"
+            />
+            <a
+              href={`${waifuImage}?force=true`}
+              download={`WaifuImage${extension}`}
+              className="absolute bottom-2 right-2"
+              target="_blank"
+            >
+              <button className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl">
+                <span className="text-2xl font-bold">
+                  <AiOutlineCloudDownload />
+                </span>
+              </button>
+            </a>
+          </div>
           {/* badges */}
           <div className="mt-4">
             {allTags.length > 0
