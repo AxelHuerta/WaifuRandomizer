@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect, ChangeEvent } from "react";
 import { AiOutlineCloudDownload } from "react-icons/ai";
+import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
 
 type Tag = {
   id: number;
@@ -15,6 +16,7 @@ export function App() {
   const [tag, setTag] = useState("");
   const [extension, setExtension] = useState(".jpg");
   const [allTags, setAllTags] = useState<Tag[]>([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const getRandomWaifu = () => {
     axios.get(baseURL).then((res) => {
@@ -35,9 +37,13 @@ export function App() {
     setTag(e.target.value);
   };
 
+  const handleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
+
   useEffect(() => {
-    getRandomWaifu();
-    // setWaifuImage("https://cdn.waifu.im/7752.jpg");
+    // getRandomWaifu();
+    setWaifuImage("https://cdn.waifu.im/7752.jpg");
   }, []);
 
   return (
@@ -55,8 +61,9 @@ export function App() {
               className="rounded-lg max-h-[70vh]"
               loading="lazy"
             />
+            {/* donwload btn */}
             <a
-              href={`${waifuImage}?force=true`}
+              href={waifuImage}
               download={`WaifuImage${extension}`}
               className="absolute bottom-2 right-2"
               target="_blank"
@@ -67,6 +74,15 @@ export function App() {
                 </span>
               </button>
             </a>
+            {/* favorite btn */}
+            <button
+              className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl absolute bottom-2 right-11"
+              onClick={handleFavorite}
+            >
+              <span className="text-2xl font-bold">
+                {isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
+              </span>
+            </button>
           </div>
           {/* badges */}
           <div className="mt-4">
