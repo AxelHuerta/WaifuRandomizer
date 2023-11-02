@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect, ChangeEvent } from "react";
 import { AiOutlineCloudDownload } from "react-icons/ai";
 import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
+import { useWaifuData } from "./store/Store";
 
 type Tag = {
   id: number;
@@ -18,10 +19,18 @@ export function App() {
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
+  // zustand
+  const { favoriteWaifus, setFavoriteWaifus } = useWaifuData((state) => state);
+
   const getRandomWaifu = () => {
     axios.get(baseURL).then((res) => {
       setWaifuImage(res.data.images[0].url);
       setAllTags(res.data.images[0].tags);
+
+      // is saved
+      setIsFavorite(
+        favoriteWaifus.includes(res.data.images[0].url) ? true : false,
+      );
     });
   };
 
@@ -38,6 +47,17 @@ export function App() {
   };
 
   const handleFavorite = () => {
+    if (isFavorite) {
+      setIsFavorite(!isFavorite);
+      setFavoriteWaifus(
+        favoriteWaifus.filter((favorite) => {
+          favorite !== waifuImage;
+        }),
+      );
+      return;
+    }
+
+    setFavoriteWaifus([...favoriteWaifus, waifuImage]);
     setIsFavorite(!isFavorite);
   };
 
@@ -61,28 +81,31 @@ export function App() {
               className="rounded-lg max-h-[70vh]"
               loading="lazy"
             />
-            {/* donwload btn */}
-            <a
-              href={waifuImage}
-              download={`WaifuImage${extension}`}
-              className="absolute bottom-2 right-2"
-              target="_blank"
-            >
-              <button className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl">
+            {/* btns */}
+            <div className="absolute bottom-2 right-2">
+              {/* favorite btn */}
+              <button
+                className="bg-[rgba(0,0,0,.7)] p-1 mr-1 rounded-2xl"
+                onClick={handleFavorite}
+              >
                 <span className="text-2xl font-bold">
-                  <AiOutlineCloudDownload />
+                  {isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
                 </span>
               </button>
-            </a>
-            {/* favorite btn */}
-            <button
-              className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl absolute bottom-2 right-11"
-              onClick={handleFavorite}
-            >
-              <span className="text-2xl font-bold">
-                {isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
-              </span>
-            </button>
+
+              {/* donwload btn */}
+              <a
+                href={waifuImage}
+                download={`WaifuImage${extension}`}
+                target="_blank"
+              >
+                <button className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl">
+                  <span className="text-2xl font-bold">
+                    <AiOutlineCloudDownload />
+                  </span>
+                </button>
+              </a>
+            </div>
           </div>
           {/* badges */}
           <div className="mt-4">
