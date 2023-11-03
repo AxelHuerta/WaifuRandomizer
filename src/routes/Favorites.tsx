@@ -17,12 +17,16 @@ export default function Favorites() {
             {favoriteWaifus.map((waifu) => {
               return (
                 <div className="card glass" key={waifu.url}>
-                  <figure className="max-h-[300px]">
-                    <img src={waifu.url} alt="Aquí debería haber una waifu" />
-                  </figure>
+                  <figure
+                    className={"h-[400px] bg-cover"}
+                    style={{
+                      background: `url(${waifu.url})`,
+                      backgroundSize: "cover",
+                    }}
+                  ></figure>
                   <div className="card-body">
                     {/* badges */}
-                    <div className="mt-4">
+                    <div>
                       {waifu.tags.length > 0
                         ? waifu.tags.map((tag, index) => {
                             return (
@@ -35,10 +39,6 @@ export default function Favorites() {
                             );
                           })
                         : null}
-                    </div>
-
-                    <div className="card-actions justify-end">
-                      <button className="btn btn-success">Remover</button>
                     </div>
                   </div>
                 </div>
