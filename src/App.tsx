@@ -3,6 +3,7 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { AiOutlineCloudDownload } from "react-icons/ai";
 import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
 import { useWaifuData } from "./store/Store";
+import Navbar from "./components/Navbar";
 
 type Tag = {
   id: number;
@@ -22,10 +23,12 @@ export function App() {
   // zustand
   const { favoriteWaifus, setFavoriteWaifus } = useWaifuData((state) => state);
 
-  const getRandomWaifu = () => {
-    axios.get(baseURL).then((res) => {
+  // TODO: repetitive code
+  const getRandomWaifu = async () => {
+    await axios.get(baseURL).then((res) => {
       setWaifuImage(res.data.images[0].url);
       setAllTags(res.data.images[0].tags);
+      setExtension(res.data.images[0].extension);
 
       // is saved
       setIsFavorite(
@@ -34,11 +37,19 @@ export function App() {
     });
   };
 
-  const getEspecificTagWaifu = () => {
-    axios.get(`${baseURL}?included_tags=${tag}`).then((res) => {
+  const getEspecificTagWaifu = async () => {
+    if (tag == "") {
+      return;
+    }
+    await axios.get(`${baseURL}?included_tags=${tag}`).then((res) => {
       setWaifuImage(res.data.images[0].url);
       setAllTags(res.data.images[0].tags);
       setExtension(res.data.images[0].extension);
+
+      // is saved
+      setIsFavorite(
+        favoriteWaifus.includes(res.data.images[0].url) ? true : false,
+      );
     });
   };
 
@@ -71,8 +82,10 @@ export function App() {
       className={"min-h-screen text-white"}
       style={{ background: `url('${waifuImage}')` }}
     >
+      {/* navbar */}
+      <Navbar />
       <div className="bg-[rgba(0,0,0,.5)] min-h-screen backdrop-blur-3xl grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center mt-8">
           {/* main image */}
           <div className="relative">
             <img
@@ -122,9 +135,6 @@ export function App() {
         </div>
 
         <div className="col-span-2">
-          <h1 className="font-bold text-white text-3xl text-center">
-            WaifuRandomizer
-          </h1>
           <div className="flex flex-col lg:flex-row py-4 justify-center">
             {/* random btn */}
             <button className="btn glass mb-4 lg:mr-4" onClick={getRandomWaifu}>
@@ -134,6 +144,7 @@ export function App() {
             <div className="form-control" onChange={handleTagForm}>
               <div className="input-group grid grid-cols-2">
                 <select className="select select-bordered">
+                  <option>Selecciona un tag</option>
                   <option value="waifu">waifu</option>
                   <option value="maid">maid</option>
                   <option value="marin-kitagawa">marin-kitagawa</option>
