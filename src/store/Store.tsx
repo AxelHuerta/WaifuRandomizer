@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { Data } from "../types/Data";
 
 type State = {
-  favoriteWaifus: string[];
+  favoriteWaifus: Data[];
 };
 
 type Actions = {
-  setFavoriteWaifus: (favoriteWaifus: string[]) => void;
+  setFavoriteWaifus: (favoriteWaifus: Data[]) => void;
 };
 
 export const useWaifuData = create(
@@ -15,7 +16,7 @@ export const useWaifuData = create(
       favoriteWaifus: [],
 
       // setters
-      setFavoriteWaifus: (favoriteWaifus: string[]) =>
+      setFavoriteWaifus: (favoriteWaifus: Data[]) =>
         set(() => ({
           favoriteWaifus,
         })),

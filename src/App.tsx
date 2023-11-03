@@ -4,13 +4,8 @@ import { AiOutlineCloudDownload } from "react-icons/ai";
 import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
 import { useWaifuData } from "./store/Store";
 import Navbar from "./components/Navbar";
-
-type Tag = {
-  id: number;
-  name: string;
-  description: string;
-  isNsfw: boolean;
-};
+import { Data } from "./types/Data";
+import { Tag } from "./types/Tag";
 
 export function App() {
   const baseURL = "https://api.waifu.im/search";
@@ -31,10 +26,22 @@ export function App() {
       setExtension(res.data.images[0].extension);
 
       // is saved
+
       setIsFavorite(
-        favoriteWaifus.includes(res.data.images[0].url) ? true : false,
+        isInFavorites(res.data.images[0].url),
+        // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
       );
+
+      console.log("Is in favorite: ", isInFavorites(res.data.images[0].url));
     });
+  };
+
+  const isInFavorites = (url: string) => {
+    let isFound = false;
+    favoriteWaifus.forEach((waifu) => {
+      if (waifu.url == url) isFound = true;
+    });
+    return isFound;
   };
 
   const getEspecificTagWaifu = async () => {
@@ -46,10 +53,17 @@ export function App() {
       setAllTags(res.data.images[0].tags);
       setExtension(res.data.images[0].extension);
 
-      // is saved
+      // // is saved
+      // setIsFavorite(
+      //   favoriteWaifus.includes(res.data.images[0].url) ? true : false,
+      // );
+
       setIsFavorite(
-        favoriteWaifus.includes(res.data.images[0].url) ? true : false,
+        isInFavorites(res.data.images[0].url),
+        // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
       );
+
+      console.log("Is in favorite: ", isInFavorites(res.data.images[0].url));
     });
   };
 
@@ -61,20 +75,20 @@ export function App() {
     if (isFavorite) {
       setIsFavorite(!isFavorite);
       setFavoriteWaifus(
-        favoriteWaifus.filter((favorite) => {
-          favorite !== waifuImage;
+        favoriteWaifus.filter((favorite: Data) => {
+          favorite.url !== waifuImage;
         }),
       );
       return;
     }
 
-    setFavoriteWaifus([...favoriteWaifus, waifuImage]);
+    setFavoriteWaifus([...favoriteWaifus, { tags: allTags, url: waifuImage }]);
     setIsFavorite(!isFavorite);
   };
 
   useEffect(() => {
-    // getRandomWaifu();
-    setWaifuImage("https://cdn.waifu.im/7752.jpg");
+    getRandomWaifu();
+    // setWaifuImage("https://cdn.waifu.im/7752.jpg");
   }, []);
 
   return (

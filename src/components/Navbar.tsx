@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
     <div
-      className={`navbar fixed z-10 ${
+      className={`navbar fixed z-20 ${
         isScrolled ? "bg-[rgba(0,0,0,.5)]" : ""
       } transition delay-50 duration-300 backdrop-blur`}
     >
