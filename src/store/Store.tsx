@@ -12,7 +12,7 @@ type Actions = {
 export const useWaifuData = create(
   persist<State & Actions>(
     (set) => ({
-      favoriteWaifus: [""],
+      favoriteWaifus: [],
 
       // setters
       setFavoriteWaifus: (favoriteWaifus: string[]) =>

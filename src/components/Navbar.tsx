@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MdFavorite } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -23,12 +24,16 @@ export default function Navbar() {
       } transition delay-50 duration-300 backdrop-blur`}
     >
       <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl">WaifuRandomizer</a>
+        <Link to="/" className="btn btn-ghost normal-case text-xl">
+          WaifuRandomizer
+        </Link>
       </div>
       <div className="flex-none">
-        <button className="btn btn-square btn-ghost text-xl">
-          <MdFavorite />
-        </button>
+        <Link to="/favoritos">
+          <button className="btn btn-square btn-ghost text-xl">
+            <MdFavorite />
+          </button>
+        </Link>
       </div>
     </div>
   );
