@@ -28,11 +28,10 @@ export function App() {
       // is saved
 
       setIsFavorite(
-        isInFavorites(res.data.images[0].url),
+        isInFavorites(res.data.images[0].url)
         // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
       );
 
-      console.log("Is in favorite: ", isInFavorites(res.data.images[0].url));
     });
   };
 
@@ -59,7 +58,7 @@ export function App() {
       // );
 
       setIsFavorite(
-        isInFavorites(res.data.images[0].url),
+        isInFavorites(res.data.images[0].url)
         // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
       );
 
@@ -77,7 +76,7 @@ export function App() {
       setFavoriteWaifus(
         favoriteWaifus.filter((favorite: Data) => {
           favorite.url !== waifuImage;
-        }),
+        })
       );
       return;
     }
@@ -88,17 +87,15 @@ export function App() {
 
   useEffect(() => {
     getRandomWaifu();
-    // setWaifuImage("https://cdn.waifu.im/7752.jpg");
   }, []);
 
   return (
     <div
-      className={"min-h-screen text-white"}
-      style={{ background: `url('${waifuImage}')` }}
+      className={"min-h-screen text-white bg-base"}
     >
       {/* navbar */}
       <Navbar />
-      <div className="bg-[rgba(0,0,0,.5)] min-h-screen backdrop-blur-3xl grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
         <div className="flex flex-col justify-center items-center mt-8">
           {/* main image */}
           <div className="relative">
