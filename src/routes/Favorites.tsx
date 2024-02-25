@@ -70,7 +70,11 @@ export default function Favorites() {
                   }}
                   onClick={() => {
                     setCurrentImage({ url: waifu.url, tags: waifu.tags });
-                    document.getElementById("modal").showModal();
+                    // TODO: change any type
+                    const modal: any = document.getElementById("modal");
+                    if (modal != null) {
+                      modal.showModal();
+                    }
                   }}
                 ></div>
               );
