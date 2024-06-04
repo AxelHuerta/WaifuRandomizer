@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import { Data } from "./types/Data";
 import { Tag } from "./types/Tag";
 
+// TODO: refactor this component
 export function App() {
   const baseURL = "https://api.waifu.im/search";
   const [waifuImage, setWaifuImage] = useState("");
@@ -14,24 +15,25 @@ export function App() {
   const [extension, setExtension] = useState(".jpg");
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   // zustand
   const { favoriteWaifus, setFavoriteWaifus } = useWaifuData((state) => state);
 
   // TODO: repetitive code
   const getRandomWaifu = async () => {
+    setIsLoading(true);
     await axios.get(baseURL).then((res) => {
       setWaifuImage(res.data.images[0].url);
       setAllTags(res.data.images[0].tags);
       setExtension(res.data.images[0].extension);
 
       // is saved
-
       setIsFavorite(
         isInFavorites(res.data.images[0].url)
         // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
       );
-
     });
   };
 
@@ -86,62 +88,77 @@ export function App() {
   };
 
   useEffect(() => {
-    getRandomWaifu();
-  }, []);
+    if (isFirstTime) {
+      getRandomWaifu();
+      setIsFirstTime(false);
+    }
+    const img = new Image();
+    img.src = waifuImage;
+    img.onload = () => {
+      setIsLoading(false);
+    };
+  }, [waifuImage]);
 
   return (
-    <div
-      className={"min-h-screen text-white bg-base"}
-    >
+    <div className={"min-h-screen text-white bg-base"}>
       {/* navbar */}
       <Navbar />
       <div className="min-h-screen grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
         <div className="flex flex-col justify-center items-center mt-8">
           {/* main image */}
           <div className="relative">
-            <img
-              src={waifuImage}
-              alt="No cargo la waifu 😔"
-              className="rounded-lg max-h-[70vh]"
-              loading="lazy"
-            />
-            {/* btns */}
-            <div className="absolute bottom-2 right-2">
-              {/* favorite btn */}
-              <button
-                className="bg-[rgba(0,0,0,.7)] p-1 mr-1 rounded-2xl"
-                onClick={handleFavorite}
-              >
-                <span className="text-2xl font-bold">
-                  {isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
-                </span>
-              </button>
+            {isLoading ? (
+              <div className={`flex justify-center items-center`}>
+                <span className="loading loading-spinner loading-lg mr-2"></span>
+                <p className="text-xl font-bold">Loading...</p>
+              </div>
+            ) : (
+              <>
+                <img
+                  src={waifuImage}
+                  alt="No cargo la waifu 😔"
+                  className="rounded-lg max-h-[70vh]"
+                  loading="lazy"
+                />
+                {/* btns */}
+                <div className="absolute bottom-12 right-2">
+                  {/* favorite btn */}
+                  <button
+                    className="bg-[rgba(0,0,0,.7)] p-1 mr-1 rounded-2xl"
+                    onClick={handleFavorite}
+                  >
+                    <span className="text-2xl font-bold">
+                      {isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
+                    </span>
+                  </button>
 
-              {/* donwload btn */}
-              <a
-                href={waifuImage}
-                download={`WaifuImage${extension}`}
-                target="_blank"
-              >
-                <button className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl">
-                  <span className="text-2xl font-bold">
-                    <AiOutlineCloudDownload />
-                  </span>
-                </button>
-              </a>
-            </div>
-          </div>
-          {/* badges */}
-          <div className="mt-4">
-            {allTags.length > 0
-              ? allTags.map((tag, index) => {
-                  return (
-                    <div className="badge mr-1" key={index}>
-                      {tag.name}
-                    </div>
-                  );
-                })
-              : null}
+                  {/* donwload btn */}
+                  <a
+                    href={waifuImage}
+                    download={`WaifuImage${extension}`}
+                    target="_blank"
+                  >
+                    <button className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl">
+                      <span className="text-2xl font-bold">
+                        <AiOutlineCloudDownload />
+                      </span>
+                    </button>
+                  </a>
+                </div>
+                {/* badges */}
+                <div className="mt-4">
+                  {allTags.length > 0
+                    ? allTags.map((tag, index) => {
+                        return (
+                          <div className="badge mr-1" key={index}>
+                            {tag.name}
+                          </div>
+                        );
+                      })
+                    : null}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
