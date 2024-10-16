@@ -1,88 +1,23 @@
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useState, useEffect, ChangeEvent } from "react";
-import { AiOutlineCloudDownload } from "react-icons/ai";
-import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
-import { useWaifuData } from "./store/Store";
-import Navbar from "./components/Navbar";
-import { Data } from "./types/Data";
-import { Tag } from "./types/Tag";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+} from "./components/ui/card";
+import { Badge } from "./components/ui/badge";
 
-export function App() {
-  const baseURL = "https://api.waifu.im/search";
-  const [waifuImage, setWaifuImage] = useState("");
-  const [tag, setTag] = useState("");
-  const [extension, setExtension] = useState(".jpg");
-  const [allTags, setAllTags] = useState<Tag[]>([]);
-  const [isFavorite, setIsFavorite] = useState(false);
+const URL = "https://api.waifu.im/search";
 
-  // zustand
-  const { favoriteWaifus, setFavoriteWaifus } = useWaifuData((state) => state);
+function App() {
+  const [waifu, setWaifu] = useState<Image | null>(null);
 
-  // TODO: repetitive code
   const getRandomWaifu = async () => {
-    await axios.get(baseURL).then((res) => {
-      setWaifuImage(res.data.images[0].url);
-      setAllTags(res.data.images[0].tags);
-      setExtension(res.data.images[0].extension);
-
-      // is saved
-
-      setIsFavorite(
-        isInFavorites(res.data.images[0].url)
-        // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
-      );
-
+    await axios.get(URL).then((res) => {
+      setWaifu(res.data.images[0]);
     });
-  };
-
-  const isInFavorites = (url: string) => {
-    let isFound = false;
-    favoriteWaifus.forEach((waifu) => {
-      if (waifu.url == url) isFound = true;
-    });
-    return isFound;
-  };
-
-  const getEspecificTagWaifu = async () => {
-    if (tag == "") {
-      return;
-    }
-    await axios.get(`${baseURL}?included_tags=${tag}`).then((res) => {
-      setWaifuImage(res.data.images[0].url);
-      setAllTags(res.data.images[0].tags);
-      setExtension(res.data.images[0].extension);
-
-      // // is saved
-      // setIsFavorite(
-      //   favoriteWaifus.includes(res.data.images[0].url) ? true : false,
-      // );
-
-      setIsFavorite(
-        isInFavorites(res.data.images[0].url)
-        // favoriteWaifus.includes(res.data.images[0].url) ? true : false,
-      );
-
-      console.log("Is in favorite: ", isInFavorites(res.data.images[0].url));
-    });
-  };
-
-  const handleTagForm = (e: ChangeEvent<HTMLInputElement>) => {
-    setTag(e.target.value);
-  };
-
-  const handleFavorite = () => {
-    if (isFavorite) {
-      setIsFavorite(!isFavorite);
-      setFavoriteWaifus(
-        favoriteWaifus.filter((favorite: Data) => {
-          favorite.url !== waifuImage;
-        })
-      );
-      return;
-    }
-
-    setFavoriteWaifus([...favoriteWaifus, { tags: allTags, url: waifuImage }]);
-    setIsFavorite(!isFavorite);
   };
 
   useEffect(() => {
@@ -90,89 +25,63 @@ export function App() {
   }, []);
 
   return (
-    <div
-      className={"min-h-screen text-white bg-base"}
-    >
-      {/* navbar */}
-      <Navbar />
-      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-3 lg:gap-8 items-center p-12">
-        <div className="flex flex-col justify-center items-center mt-8">
-          {/* main image */}
-          <div className="relative">
-            <img
-              src={waifuImage}
-              alt="No cargo la waifu 😔"
-              className="rounded-lg max-h-[70vh]"
-              loading="lazy"
-            />
-            {/* btns */}
-            <div className="absolute bottom-2 right-2">
-              {/* favorite btn */}
-              <button
-                className="bg-[rgba(0,0,0,.7)] p-1 mr-1 rounded-2xl"
-                onClick={handleFavorite}
-              >
-                <span className="text-2xl font-bold">
-                  {isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
-                </span>
-              </button>
+    // TODO: Does these classes make sense?
+    <div className="flex justify-center items-center min-h-screen">
+      <Card className="max-w-[1700px] w-[1700px]">
+        <CardHeader>WaifuRandomizer</CardHeader>
+        <CardContent className="flex gap-8">
+          <img
+            src={waifu?.url}
+            alt="Waifu"
+            className="max-h-[70vh] rounded-xl"
+            loading="lazy"
+          />
+          <div>
+            <h2 className="text-3xl font-bold">ID: {waifu?.image_id}</h2>
+            <ul>
+              <li>Signature: {waifu?.signature}</li>
+              <li>Extension: {waifu?.extension}</li>
+              <li>Dominant color: {waifu?.dominant_color}</li>
+              <li>Source: {waifu?.source}</li>
+              <li>Uploaded at: {waifu?.uploaded_at}</li>
+              <li>Liked at: {waifu?.liked_at}</li>
+              <li>Is NSFW: {waifu?.is_nsfw ? "Yes" : "No"}</li>
+              <li>Width: {waifu?.width}</li>
+              <li>Height: {waifu?.height}</li>
+              <li>Byte size: {waifu?.byte_size}</li>
+              <li>Favorites: {waifu?.favorites}</li>
+              <li>URL: {waifu?.url}</li>
+              <li>Preview URL: {waifu?.preview_url}</li>
+            </ul>
 
-              {/* donwload btn */}
-              <a
-                href={waifuImage}
-                download={`WaifuImage${extension}`}
-                target="_blank"
-              >
-                <button className="bg-[rgba(0,0,0,.7)] p-1 rounded-2xl">
-                  <span className="text-2xl font-bold">
-                    <AiOutlineCloudDownload />
-                  </span>
-                </button>
-              </a>
-            </div>
+            {waifu?.artist && (
+              <>
+                <h3 className="text-2xl font-bold my-4">Artist</h3>
+                <ul>
+                  <li>Artist ID: {waifu.artist.artist_id}</li>
+                  <li>Name: {waifu.artist.name}</li>
+                  <li>Patreon: {waifu.artist.patreon}</li>
+                  <li>Pixiv: {waifu.artist.pixiv}</li>
+                  <li>Twitter: {waifu.artist.twitter}</li>
+                  <li>Deviant Art: {waifu.artist.deviant_art}</li>
+                </ul>
+              </>
+            )}
           </div>
-          {/* badges */}
-          <div className="mt-4">
-            {allTags.length > 0
-              ? allTags.map((tag, index) => {
-                  return (
-                    <div className="badge mr-1" key={index}>
-                      {tag.name}
-                    </div>
-                  );
-                })
-              : null}
-          </div>
-        </div>
-
-        <div className="col-span-2">
-          <div className="flex flex-col lg:flex-row py-4 justify-center">
-            {/* random btn */}
-            <button className="btn glass mb-4 lg:mr-4" onClick={getRandomWaifu}>
-              Random
-            </button>
-            {/* tag form */}
-            <div className="form-control" onChange={handleTagForm}>
-              <div className="input-group grid grid-cols-2">
-                <select className="select select-bordered">
-                  <option>Selecciona un tag</option>
-                  <option value="waifu">waifu</option>
-                  <option value="maid">maid</option>
-                  <option value="marin-kitagawa">marin-kitagawa</option>
-                  <option value="mori-calliope">mori-calliope</option>
-                  <option value="raiden-shogun">raiden-shogun</option>
-                  <option value="oppai">oppai</option>
-                  <option value="selfies">selfies</option>
-                  <option value="uniform">uniform</option>
-                </select>
-                <button className="btn glass" onClick={getEspecificTagWaifu}>
-                  Por tag
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+        <CardDescription className="mx-5">
+          {waifu?.tags.map((tag) => {
+            return (
+              <Badge key={tag.tag_id} className="mr-2 rounded-xl">
+                {tag.name}
+              </Badge>
+            );
+          })}
+        </CardDescription>
+        <CardFooter>El footer</CardFooter>
+      </Card>
     </div>
   );
 }
+
+export default App;
