@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Card,
@@ -12,15 +12,51 @@ import { Button } from "./components/ui/button";
 import Link from "./components/ui/Link";
 import { Skeleton } from "./components/ui/skeleton";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const tags = [
+  "waifu",
+  "maid",
+  "marin-kitagawa",
+  "mori-calliope",
+  "raiden-shogun",
+  "oppai",
+  "selfies",
+  "uniform",
+  "kamisato-ayaka",
+];
+
 const URL = "https://api.waifu.im/search";
 
 function App() {
   const [waifu, setWaifu] = useState<Image | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const getRandomWaifu = async () => {
     setIsLoading(true);
     await axios.get(URL).then((res) => {
+      setWaifu(res.data.images[0]);
+    });
+
+    setIsLoading(false);
+  };
+
+  const handleSelectTag = (e: FormEvent<HTMLFormElement>) => {
+    const target = e.target as HTMLInputElement;
+    setSelectedTag(target.value);
+  };
+
+  const getWaifuByTag = async () => {
+    setIsLoading(true);
+    console.log(selectedTag);
+    await axios.get(`${URL}?included_tags=${selectedTag}`).then((res) => {
       setWaifu(res.data.images[0]);
     });
 
@@ -34,7 +70,7 @@ function App() {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <Card className="max-w-[1700px] w-[1700px] h-[90vh] flex flex-col justify-between">
-        <CardHeader>WaifuRandomizer</CardHeader>
+        <CardHeader className="text-4xl font-bold">WaifuRandomizer</CardHeader>
         <CardContent className="grid grid-cols-2 gap-8">
           {/* image */}
           {isLoading ? (
@@ -125,6 +161,25 @@ function App() {
           })}
         </CardDescription>
         <CardFooter className="flex justify-end">
+          <div className="flex mx-4">
+            <form onChange={handleSelectTag}>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Tag" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tags.map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </form>
+            <Button className="rounded-full ml-4" onClick={getWaifuByTag}>
+              Por tag
+            </Button>
+          </div>
           <Button className="rounded-full" onClick={getRandomWaifu}>
             Random
           </Button>
