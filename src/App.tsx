@@ -31,7 +31,11 @@ function App() {
   return (
     <div className="bg-gray-950 min-h-screen">
       <section id="main" className="py-8 flex justify-around gap-24 mx-24">
-        <PhoneMockup imageUrl={info?.images[0].url || null} loading={loading} />
+        <PhoneMockup
+          imageUrl={info?.images[0].url || null}
+          loading={loading}
+          color={info?.images[0].dominant_color}
+        />
         <div className="w-full flex flex-col justify-between">
           <div className="flex items-center justify-between mt-12">
             <h1 className="text-2xl font-extrabold">Waifu Randomizer</h1>

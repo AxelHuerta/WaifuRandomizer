@@ -1,12 +1,13 @@
 interface Props {
   imageUrl: string | null;
   loading: boolean;
+  color: string | undefined;
 }
 
-export default function PhoneMockup({ imageUrl, loading }: Props) {
+export default function PhoneMockup({ imageUrl, loading, color }: Props) {
   return (
     <div>
-      <div className="mockup-phone">
+      <div className={`mockup-phone`} style={{ borderColor: color }}>
         <div
           className={`mockup-phone-display grid bg-[url(${imageUrl})] bg-cover bg-center cursor-pointer`}
           onClick={() => {
