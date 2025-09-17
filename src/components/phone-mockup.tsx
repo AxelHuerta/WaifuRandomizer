@@ -1,5 +1,5 @@
 interface Props {
-  imageUrl: string;
+  imageUrl: string | null;
   loading: boolean;
 }
 
@@ -16,7 +16,7 @@ export default function PhoneMockup({ imageUrl, loading }: Props) {
             if (modal) modal.showModal();
           }}
         >
-          {!loading ? (
+          {!loading && imageUrl ? (
             <img
               src={imageUrl}
               alt=""
@@ -34,12 +34,11 @@ export default function PhoneMockup({ imageUrl, loading }: Props) {
       <dialog id="my_modal_3" className="modal">
         <div className="w-screen h-screen flex justify-center  backdrop-blur-md bg-black/50">
           <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
-          <img src={imageUrl} alt="Waifu image" />
+          {imageUrl && <img src={imageUrl} alt="Waifu image" />}
         </div>
       </dialog>
     </div>
