@@ -29,32 +29,43 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-gray-950 min-h-screen">
-      <section id="main" className="py-8 flex justify-around gap-24 mx-24">
-        <PhoneMockup
-          imageUrl={info?.images[0].url || null}
-          loading={loading}
-          color={info?.images[0].dominant_color}
-        />
-        <div className="w-full flex flex-col justify-between">
-          <div className="flex items-center justify-between mt-12">
-            <h1 className="text-2xl font-extrabold">Waifu Randomizer</h1>
-            <button className="btn btn-soft btn-neutral">Ir a favoritos</button>
-          </div>
+    <>
+      <div className="bg-gray-950 min-h-screen">
+        <section id="main" className="py-8 flex justify-around gap-24 mx-24">
+          <PhoneMockup
+            imageUrl={info?.images[0].url || null}
+            loading={loading}
+            color={info?.images[0].dominant_color}
+          />
+          <div className="w-full flex flex-col justify-between">
+            <div className="flex items-center justify-between mt-12">
+              <h1 className="text-2xl font-extrabold">Waifu Randomizer</h1>
+              <button className="btn btn-soft btn-neutral">
+                Ir a favoritos
+              </button>
+            </div>
 
-          <Code data={info} />
+            <Code data={info} />
 
-          <div className="pb-12">
-            <button
-              className="btn btn-soft btn-primary"
-              onClick={getRandomImage}
-            >
-              Random
-            </button>
+            <div className="pb-12">
+              <button
+                className="btn btn-soft btn-primary"
+                onClick={getRandomImage}
+              >
+                Random
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        <section className="bg-[#020618] min-h-screen">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora,
+          similique earum nihil nam eveniet doloremque voluptatem repellat
+          ratione odio sint adipisci saepe eius, laborum maiores, et animi minus
+          mollitia! Et!
+        </section>
+      </div>
+    </>
   );
 }
 
