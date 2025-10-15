@@ -6,8 +6,8 @@ interface Props {
 
 export default function PhoneMockup({ imageUrl, loading, color }: Props) {
   return (
-    <div>
-      <div className={`mockup-phone`} style={{ borderColor: color }}>
+    <>
+      <div className={`mockup-phone h-[98vh]`} style={{ borderColor: color }}>
         <div
           className={`mockup-phone-display relative bg-[url(${imageUrl})] bg-cover bg-center cursor-pointer`}
           onClick={() => {
@@ -62,6 +62,6 @@ export default function PhoneMockup({ imageUrl, loading, color }: Props) {
           {imageUrl && <img src={imageUrl} alt="Waifu image" />}
         </div>
       </dialog>
-    </div>
+    </>
   );
 }
